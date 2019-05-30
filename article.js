@@ -5,7 +5,6 @@ class Article {
     this.title = title;
     this.author = author;
     this.text = text;
-
   }
 
   matches(query) {
