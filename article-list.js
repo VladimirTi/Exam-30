@@ -5,27 +5,26 @@ class ArticleList {
   constructor(container) {
     this.container = container;
     this.storage = localStorage;
-    this.nodeList = [];
+    this.articleList = [];
     this.deletedList = JSON.parse(this.storage.getItem('deletedList')) || [];
   }
 
   addArticle(article) {
-    this.nodeList.push(article);
+    this.articleList.push(article);
   }
 
-  removeArticle(event) {
-    const string = event.path[1].firstElementChild.innerText;
-    const index = this.nodeList.findIndex(item => item.title === string);
-    this.nodeList.splice(index, 1);
-    this.deletedList.push(string)
+  removeArticle(articleTitle,query) {
+    const index = this.articleList.findIndex(item => item.title === articleTitle);
+    this.articleList.splice(index, 1);
+    this.deletedList.push(articleTitle)
     this.storage.setItem('deletedList', JSON.stringify(this.deletedList))
-    this.render();
+    this.render(query);
   }
 
   render(query = '') {
-    const nodeList = this.nodeList.filter(item => item.matches(query));
+    const articleList = this.articleList.filter(item => item.matches(query));
     this.container.innerHTML = '';
-    nodeList.forEach(item => {
+    articleList.forEach(item => {
       const section = document.createElement('section');
       const titleHtml = document.createElement('h4');
       const authorHtml = document.createElement('h6');
@@ -35,7 +34,8 @@ class ArticleList {
       authorHtml.innerText = item.author;
       button.innerText = 'DELETE';
       button.addEventListener('click', event => {
-        this.removeArticle(event);
+        const article = event.path[1].firstElementChild.innerText;
+        this.removeArticle(article, query);
       })
 
       section.append(titleHtml);
